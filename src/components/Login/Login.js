@@ -14,45 +14,72 @@ const emailReducer = (prevState, actions) => {
       return { value: "", isValid: null };
   }
 };
+const passwordReducer = (prevState, actions) => {
+  if (actions.type === "user 9a3ed yekteb") {
+    return { value: actions.data, isValid: actions.data.trim().length > 6 };
+  } else if (actions.type === "ki to5rej") {
+    return {
+      value: prevState.value,
+      isValid: prevState.value.trim().length > 6,
+    };
+  }
+  return { value: "", isValid: null };
+  // switch (actions.type) {
+  //   case "user 9a3ed yekteb":
+  //     return { value: actions.data, isValid: actions.data.trim().length > 6 };
+  //   case "ki to5rej":
+  //     return {
+  //       value: prevState.value,
+  //       isValid: prevState.value.trim().length > 6,
+  //     };
+  //   default:
+  //     return { value: "", isValid: null };
+  // }
+};
 
 const Login = (props) => {
   // const [enteredEmail, setEnteredEmail] = useState("");
   // const [emailIsValid, setEmailIsValid] = useState();
+  // const [enteredPassword, setEnteredPassword] = useState("");
+  // const [passwordIsValid, setPasswordIsValid] = useState();
   const [email, dispatchEmail] = useReducer(emailReducer, {
     value: "",
     isValid: null,
   });
-  const [enteredPassword, setEnteredPassword] = useState("");
-  const [passwordIsValid, setPasswordIsValid] = useState();
+  const [password, dispatchPassword] = useReducer(passwordReducer, {
+    value: "",
+    isValid: null,
+  });
   const [formIsValid, setFormIsValid] = useState(false);
-  // useEffect(() => {
-  //   let x = setTimeout(() => {
-  //     console.log("effect");
-  //     setFormIsValid(
-  //       enteredEmail.includes("@") && enteredPassword.trim().length > 6
-  //     );
-  //   }, 1000);
-  //   return () => {
-  //     clearTimeout(x);
-  //     console.log("clean-up");
-  //   };
-  // }, [enteredEmail, enteredPassword]);
+  const { isValid: emailValidation } = email;
+  const { isValid: passwordVAlidation } = password;
+  useEffect(() => {
+    let x = setTimeout(() => {
+      console.log("effect");
+      setFormIsValid(emailValidation && passwordVAlidation);
+    }, 1000);
+    return () => {
+      clearTimeout(x);
+      console.log("clean-up");
+    };
+  }, [emailValidation, passwordVAlidation]);
 
   const emailChangeHandler = (event) => {
     // setEnteredEmail(event.target.value);
     dispatchEmail({ type: "user 9a3ed yekteb", data: event.target.value });
 
-    setFormIsValid(
-      event.target.value.includes("@") && enteredPassword.trim().length > 6
-    );
+    // setFormIsValid(
+    //   event.target.value.includes("@") && password.value.trim().length > 6
+    // );
   };
 
   const passwordChangeHandler = (event) => {
-    setEnteredPassword(event.target.value);
+    // setEnteredPassword(event.target.value);
+    dispatchPassword({ type: "user 9a3ed yekteb", data: event.target.value });
 
-    setFormIsValid(
-      event.target.value.trim().length > 6 && email.value.includes("@")
-    );
+    // setFormIsValid(
+    //   event.target.value.trim().length > 6 && email.value.includes("@")
+    // );
   };
 
   const validateEmailHandler = () => {
@@ -61,12 +88,13 @@ const Login = (props) => {
   };
 
   const validatePasswordHandler = () => {
-    setPasswordIsValid(enteredPassword.trim().length > 6);
+    // setPasswordIsValid(enteredPassword.trim().length > 6);
+    dispatchPassword({ type: "ki to5rej" });
   };
 
   const submitHandler = (event) => {
     event.preventDefault();
-    props.onLogin(email.value, enteredPassword);
+    props.onLogin(email.value, password.value);
   };
 
   return (
@@ -88,14 +116,14 @@ const Login = (props) => {
         </div>
         <div
           className={`${classes.control} ${
-            passwordIsValid === false ? classes.invalid : ""
+            password.isValid === false ? classes.invalid : ""
           }`}
         >
           <label htmlFor="password">Password</label>
           <input
             type="password"
             id="password"
-            value={enteredPassword}
+            value={password.value}
             onChange={passwordChangeHandler}
             onBlur={validatePasswordHandler}
           />
